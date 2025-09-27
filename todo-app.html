@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .main-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 80px);
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 70px;
+            }
+            
+            .navbar {
+                padding: 10px 0;
+            }
+            
+            .nav-container {
+                padding: 0 15px;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            .nav-links {
+                gap: 20px;
+            }
+            
+            .nav-links a {
+                font-size: 14px;
+            }
+            
+            .main-content {
+                padding: 15px;
+                min-height: calc(100vh - 70px);
+            }
+            
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            
+            h1 {
+                font-size: 2rem;
+                margin-bottom: 20px;
+            }
+            
+            .input-section {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            #addBtn {
+                padding: 15px;
+            }
+            
+            .task-item {
+                padding: 12px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .task-content {
+                width: 100%;
+            }
+            
+            .delete-btn {
+                align-self: flex-end;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .nav-links {
+                gap: 15px;
+            }
+            
+            .logo {
+                font-size: 1.3rem;
+            }
+            
+            .nav-links a {
+                font-size: 13px;
+            }
+            
+            .container {
+                padding: 15px;
+                border-radius: 10px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            #taskInput, #addBtn {
+                font-size: 14px;
+            }
+            
+            .task-text {
+                font-size: 14px;
+            }
+            
+            .stats {
+                font-size: 12px;
+            }
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        #taskInput {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #taskInput:focus {
+            border-color: #667eea;
+        }
+
+        #addBtn {
+            padding: 15px 25px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        #addBtn:hover {
+            background: #5a6fd8;
+        }
+
+        .task-list {
+            list-style: none;
+        }
+
+        .task-item {
+            background: #f8f9fa;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-left: 4px solid #667eea;
+            transition: transform 0.2s;
+        }
+
+        .task-item:hover {
+            transform: translateX(5px);
+        }
+
+        .task-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+        }
+
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .task-text {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .task-completed .task-text {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        .task-completed {
+            opacity: 0.6;
+            border-left-color: #28a745;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #888;
+            font-style: italic;
+            padding: 40px 20px;
+        }
+
+        .stats {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">AwsmTodos</a>
+            <ul class="nav-links">
+                <li><a href="todo-app.html">Home</a></li>
+                <li><a href="ai-app.html">AI Assistant</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="#" id="logoutBtn">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="container">
+        <h1>📝 To-Do List</h1>
+        
+        <div class="input-section">
+            <input type="text" id="taskInput" placeholder="Add a new task..." maxlength="100">
+            <button id="addBtn">Add Task</button>
+        </div>
+
+        <ul class="task-list" id="taskList">
+        </ul>
+
+        <div class="stats" id="stats">
+            <span>0 tasks total • 0 completed • 0 remaining</span>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        // Check if user is logged in
+        if (!localStorage.getItem('isLoggedIn')) {
+            window.location.href = 'login.html';
+        }
+
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('username');
+            window.location.href = 'login.html';
+        });
+
+        let tasks = [];
+        const taskInput = document.getElementById('taskInput');
+        const addBtn = document.getElementById('addBtn');
+        const taskList = document.getElementById('taskList');
+        const stats = document.getElementById('stats');
+
+        // Save tasks to localStorage with user-specific key
+        function saveTasks() {
+            const currentUser = localStorage.getItem('username');
+            if (currentUser === 'shaurya777') {
+                localStorage.setItem('todos_shaurya777', JSON.stringify(tasks));
+            }
+        }
+
+        // Load tasks from localStorage for specific user
+        function loadTasks() {
+            const currentUser = localStorage.getItem('username');
+            if (currentUser === 'shaurya777') {
+                const savedTasks = localStorage.getItem('todos_shaurya777');
+                if (savedTasks) {
+                    tasks = JSON.parse(savedTasks);
+                }
+            }
+        }
+
+        function addTask() {
+            const text = taskInput.value.trim();
+            if (!text) return;
+            
+            const task = {
+                id: Date.now(),
+                text: text,
+                completed: false
+            };
+            
+            tasks.push(task);
+            taskInput.value = '';
+            saveTasks();
+            renderTasks();
+        }
+
+        function deleteTask(id) {
+            tasks = tasks.filter(task => task.id !== id);
+            saveTasks();
+            renderTasks();
+        }
+
+        function toggleTask(id) {
+            tasks = tasks.map(task => 
+                task.id === id ? { ...task, completed: !task.completed } : task
+            );
+            saveTasks();
+            renderTasks();
+        }
+
+        function renderTasks() {
+            taskList.innerHTML = '';
+            
+            if (tasks.length === 0) {
+                taskList.innerHTML = '<div class="empty-state">No tasks yet. Add one above!</div>';
+            } else {
+                tasks.forEach(task => {
+                    const li = document.createElement('li');
+                    li.className = `task-item ${task.completed ? 'task-completed' : ''}`;
+                    
+                    li.innerHTML = `
+                        <div class="task-content">
+                            <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''}>
+                            <span class="task-text">${task.text}</span>
+                        </div>
+                        <button class="delete-btn">Delete</button>
+                    `;
+                    
+                    li.querySelector('.task-checkbox').addEventListener('change', () => toggleTask(task.id));
+                    li.querySelector('.delete-btn').addEventListener('click', () => deleteTask(task.id));
+                    
+                    taskList.appendChild(li);
+                });
+            }
+            
+            updateStats();
+        }
+
+        function updateStats() {
+            const total = tasks.length;
+            const completed = tasks.filter(task => task.completed).length;
+            const remaining = total - completed;
+            
+            stats.innerHTML = `<span>${total} tasks total • ${completed} completed • ${remaining} remaining</span>`;
+        }
+
+        // Load AI-added todos
+        function loadAITodos() {
+            const aiTodos = JSON.parse(localStorage.getItem('aiTodos') || '[]');
+            aiTodos.forEach(todo => {
+                if (!tasks.find(t => t.id === todo.id)) {
+                    tasks.push(todo);
+                }
+            });
+            // Clear AI todos after loading
+            localStorage.removeItem('aiTodos');
+            if (aiTodos.length > 0) {
+                saveTasks();
+            }
+        }
+
+        addBtn.addEventListener('click', addTask);
+        taskInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addTask();
+        });
+
+        // Initialize: Load saved todos, load AI todos, then render
+        loadTasks();
+        loadAITodos();
+        renderTasks();
+    </script>
+</body>
+</html>
